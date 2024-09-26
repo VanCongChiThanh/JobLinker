@@ -31,7 +31,7 @@ public class Company {
     @PreUpdate
     public void handleBeforeUpdate() {
         this.updatedAt = Instant.now();
-        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent()==true ? SecurityUtil.getCurrentUserLogin().get():"";
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent()==true ? SecurityUtil.getCurrentUserLogin().get():"";
     }
     public String getCreatedBy() {
         return createdBy;
