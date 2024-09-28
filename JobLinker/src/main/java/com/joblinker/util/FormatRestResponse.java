@@ -1,6 +1,7 @@
 package com.joblinker.util;
 
 import com.joblinker.domain.RestResponse;
+import com.joblinker.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -35,7 +36,8 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         }
         else{
             restResponse.setStatusCode(status);
-            restResponse.setMessage("Success");
+            ApiMessage message=returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(message!=null ? message.value():"Call API Success");
             restResponse.setData(body);
             return restResponse;
         }

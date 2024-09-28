@@ -5,10 +5,9 @@ import com.joblinker.domain.dto.ResultPaginationDTO;
 import com.joblinker.domain.dto.SearchCriteria;
 import com.joblinker.repository.GenericSpecification;
 import com.joblinker.service.CompanyService;
+import com.joblinker.util.annotation.ApiMessage;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,20 +43,16 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
+    @ApiMessage("fetch company")
     public ResponseEntity<ResultPaginationDTO> getAllCompanies(
-            @RequestParam("page") Optional<String> currentOptional,
-            @RequestParam("size") Optional<String> pageSizeOptional,
+            Pageable pageable,
             @RequestParam(value = "key", required = false) Optional<String> keyOptional,
             @RequestParam(value = "operation", required = false) Optional<String> operationOptional,
             @RequestParam(value = "value", required = false) Optional<String> valueOptional
     ) {
-        String currentPage = currentOptional.orElse("1");
-        String pageSize = pageSizeOptional.orElse("10");
 
         SearchCriteria criteria = buildSearchCriteria(keyOptional, operationOptional, valueOptional);
-
         GenericSpecification<Company> spec = new GenericSpecification<>(criteria);
-        Pageable pageable = PageRequest.of(Integer.parseInt(currentPage) - 1, Integer.parseInt(pageSize));
 
         return ResponseEntity.ok(companyService.getCompanyList(pageable, spec));
     }

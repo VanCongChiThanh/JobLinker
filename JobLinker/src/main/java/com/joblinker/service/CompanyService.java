@@ -4,6 +4,7 @@ import com.joblinker.domain.Company;
 import com.joblinker.domain.RestResponse;
 import com.joblinker.domain.dto.Meta;
 import com.joblinker.domain.dto.ResultPaginationDTO;
+import com.joblinker.domain.dto.SearchCriteria;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.GenericSpecification;
 import jakarta.persistence.EntityNotFoundException;
