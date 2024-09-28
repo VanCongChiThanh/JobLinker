@@ -2,10 +2,13 @@ package com.joblinker.controller;
 
 import com.joblinker.domain.Company;
 import com.joblinker.domain.dto.ResultPaginationDTO;
+import com.joblinker.domain.dto.SearchCriteria;
+import com.joblinker.repository.GenericSpecification;
 import com.joblinker.service.CompanyService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,15 +45,29 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public ResponseEntity<ResultPaginationDTO> getAllCompanies(
-        @RequestParam("current") Optional<String> currentOptional ,
-        @RequestParam("pageSize") Optional<String> pageSizeOptional
-    )
-    {
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize=pageSizeOptional.isPresent()?pageSizeOptional.get():"";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent)-1,Integer.parseInt(sPageSize));
-        return ResponseEntity.ok(companyService.getCompanyList(pageable));
+            @RequestParam("page") Optional<String> currentOptional,
+            @RequestParam("size") Optional<String> pageSizeOptional,
+            @RequestParam(value = "key", required = false) Optional<String> keyOptional,
+            @RequestParam(value = "operation", required = false) Optional<String> operationOptional,
+            @RequestParam(value = "value", required = false) Optional<String> valueOptional
+    ) {
+        String currentPage = currentOptional.orElse("1");
+        String pageSize = pageSizeOptional.orElse("10");
+
+        SearchCriteria criteria = buildSearchCriteria(keyOptional, operationOptional, valueOptional);
+
+        GenericSpecification<Company> spec = new GenericSpecification<>(criteria);
+        Pageable pageable = PageRequest.of(Integer.parseInt(currentPage) - 1, Integer.parseInt(pageSize));
+
+        return ResponseEntity.ok(companyService.getCompanyList(pageable, spec));
     }
+    private SearchCriteria buildSearchCriteria(Optional<String> key, Optional<String> operation, Optional<String> value) {
+        if (key.isPresent() && operation.isPresent() && value.isPresent()) {
+            return new SearchCriteria(key.get(), operation.get(), value.get());
+        }
+        return null;
+    }
+
     @GetMapping("/companies/{companyId}")
     public ResponseEntity<Company> getCompanyById(@PathVariable Long companyId) {
         return ResponseEntity.ok(companyService.getCompanyById(companyId));

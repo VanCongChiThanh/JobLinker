@@ -5,6 +5,7 @@ import com.joblinker.domain.RestResponse;
 import com.joblinker.domain.dto.Meta;
 import com.joblinker.domain.dto.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
+import com.joblinker.repository.GenericSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +22,8 @@ public class CompanyService {
     public Company saveCompany(Company company) {
         return companyRepository.save(company);
     }
-    public ResultPaginationDTO getCompanyList(Pageable pageable) {
-        Page<Company> pageCompanies=companyRepository.findAll(pageable);
+    public ResultPaginationDTO getCompanyList(Pageable pageable, GenericSpecification<Company> spec) {
+        Page<Company> pageCompanies=companyRepository.findAll(spec,pageable);
         ResultPaginationDTO result = new ResultPaginationDTO();
         Meta meta=new Meta();
         meta.setPage(pageCompanies.getNumber()+1);
