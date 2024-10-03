@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/login").permitAll() // Cho phép truy cập vào tất cả các endpoint liên quan đến users
+                                .requestMatchers("/", "/api/v1/login").permitAll() // Cho phép truy cập vào tất cả các endpoint liên quan đến users
                                 .anyRequest().authenticated() // Các yêu cầu khác sẽ yêu cầu xác thực
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())

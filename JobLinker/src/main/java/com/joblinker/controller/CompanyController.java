@@ -44,7 +44,7 @@ public class CompanyController {
     }
 
     @GetMapping("/companies")
-    @ApiMessage("fetch company")
+    @ApiMessage("fetch companys")
     public ResponseEntity<ResultPaginationDTO> getAllCompanies(
             Pageable pageable,
             @RequestParam(value = "key", required = false) Optional<String> keyOptional,

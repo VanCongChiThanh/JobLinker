@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +28,8 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(value={
             UsernameNotFoundException.class,
-            BadCredentialsException.class
+            BadCredentialsException.class,
+            CustomException.class
     })
     public ResponseEntity<RestResponse<Object>> handleCommonExceptions(Exception exception) {
         RestResponse<Object> restResponse = new RestResponse<>();
@@ -48,5 +50,14 @@ public class GlobalExceptionHandler {
         restResponse.setMessage(errors.size()>1?errors:errors.get(0));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
+    }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<RestResponse<Object>> handNotFoundException(Exception exception){
+        RestResponse<Object> restResponse = new RestResponse<>();
+        restResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+        restResponse.setError(exception.getMessage());
+        restResponse.setMessage("404 Not found");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restResponse);
     }
 }
