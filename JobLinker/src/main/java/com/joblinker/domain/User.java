@@ -24,6 +24,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss a",timezone="GMT+7")
     private Instant createdAt;

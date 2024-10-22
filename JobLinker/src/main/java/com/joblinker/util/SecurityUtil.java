@@ -1,5 +1,6 @@
 package com.joblinker.util;
 
+import com.joblinker.domain.dto.ResLoginDTO;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,25 +38,56 @@ public class SecurityUtil {
         byte[] keyBytes = Base64.from(jwtKey).decode();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, JWS_ALGORITHM.getName());
     }
-    public String createToken(Authentication authentication) {
-        // Lấy thời điểm hiện tại
+    public String createAccessToken(String email, ResLoginDTO userDTO) {
+        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        userToken.setId(userDTO.getUser().getId());
+        userToken.setEmail(userDTO.getUser().getEmail());
+        userToken.setName(userDTO.getUser().getName());
+
         Instant now = Instant.now();
+        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
 
-        // Xác định thời gian hết hạn (token validity)
-        Instant validity = now.plus(jwtExpiration, ChronoUnit.SECONDS);
+        // hardcode permission (for testing)
+        List<String> listAuthority = new ArrayList<String>();
 
-        // Tạo JwtClaimsSet chứa thông tin của token
+        listAuthority.add("ROLE_USER_CREATE");
+        listAuthority.add("ROLE_USER_UPDATE");
+
+        // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("demoRest") // Đặt tên ứng dụng của bạn làm issuer
-                .issuedAt(now)            // Thời điểm phát hành token
-                .expiresAt(validity)       // Thời điểm hết hạn của token
-                .subject(authentication.getName())  // Tên người dùng (authentication principal)
-                .claim("roles", authentication.getAuthorities()) // Thêm thông tin vai trò người dùng
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", userToken)
+                .claim("permission", listAuthority)
                 .build();
-        JwsHeader header = JwsHeader.with(JWS_ALGORITHM).build();
-        // Mã hóa token và trả về chuỗi JWT
-        return this.jwtEncoder.encode(JwtEncoderParameters.from(header,claims)).getTokenValue();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWS_ALGORITHM).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
+
+    public String createRefreshToken(String email, ResLoginDTO userDTO) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+
+        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        userToken.setId(userDTO.getUser().getId());
+        userToken.setEmail(userDTO.getUser().getEmail());
+        userToken.setName(userDTO.getUser().getName());
+
+
+        // @formatter:off
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                .subject(email)
+                .claim("user", userToken)
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWS_ALGORITHM).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
     /**
      * Get the login of the current user.
      *

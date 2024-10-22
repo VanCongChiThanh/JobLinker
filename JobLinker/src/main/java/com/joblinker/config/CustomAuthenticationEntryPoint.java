@@ -33,7 +33,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 .map(Throwable::getMessage)
                 .orElse(authException.getMessage());
         res.setError(errorMessage);
-        res.setMessage("Token không hợp lệ");
+        res.setMessage("Token is not valid");
         mapper.writeValue(response.getWriter(), res);
     }
 }

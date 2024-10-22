@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/api/v1/login").permitAll() // Cho phép truy cập vào tất cả các endpoint liên quan đến users
+                                .requestMatchers("/", "/api/v1/auth/login","/api/v1/auth/refresh").permitAll() // Cho phép truy cập vào tất cả các endpoint liên quan đến users
                                 .anyRequest().authenticated() // Các yêu cầu khác sẽ yêu cầu xác thực
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
@@ -84,6 +84,7 @@ public class SecurityConfiguration {
     public JwtAuthenticationConverter jwtAuthenticationConverter(){
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("permission");
 
         JwtAuthenticationConverter jwtAuthenticationConverter=new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
