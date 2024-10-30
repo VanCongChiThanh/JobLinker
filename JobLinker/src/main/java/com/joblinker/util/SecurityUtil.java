@@ -31,8 +31,13 @@ public class SecurityUtil {
     @Value("${jwt.base64-secret}")
     private String jwtKey;
 
-    @Value("${jwt_expiration}")
-    private Long jwtExpiration;
+    @Value("${jwt.access-token-validity-in-seconds}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
+
+
 
     private SecretKey getSecretKey(){
         byte[] keyBytes = Base64.from(jwtKey).decode();
@@ -45,7 +50,7 @@ public class SecurityUtil {
         userToken.setName(userDTO.getUser().getName());
 
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         // hardcode permission (for testing)
         List<String> listAuthority = new ArrayList<String>();
@@ -68,7 +73,7 @@ public class SecurityUtil {
 
     public String createRefreshToken(String email, ResLoginDTO userDTO) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
         userToken.setId(userDTO.getUser().getId());
@@ -95,24 +100,24 @@ public class SecurityUtil {
      */
     public static Optional<String> getCurrentUserLogin() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        return Optional.ofNullable(securityContext.getAuthentication())
-                .map(authentication -> {
-                    Object principal = authentication.getPrincipal();
-                    if (principal instanceof UserDetails) {
-                        // Nếu principal là kiểu UserDetails, lấy tên người dùng từ UserDetails
-                        UserDetails springSecurityUser = (UserDetails) principal;
-                        return springSecurityUser.getUsername();
-                    } else if (principal instanceof Jwt) {
-                        // Nếu principal là kiểu Jwt, lấy tên người dùng từ JWT claims (ví dụ, "sub")
-                        Jwt jwt = (Jwt) principal;
-                        return jwt.getClaimAsString("sub"); // Lấy claim 'sub' chứa tên người dùng
-                    } else if (principal instanceof String) {
-                        // Trường hợp principal là một chuỗi (ví dụ: token)
-                        return (String) principal;
-                    }
-                    return null;
-                });
+        return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
     }
+
+    private static String extractPrincipal(Authentication authentication) {
+
+        if (authentication == null) {
+            return null;
+        } else if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
+            return springSecurityUser.getUsername();
+        } else if (authentication.getPrincipal() instanceof Jwt jwt) {
+            return jwt.getSubject();
+        } else if (authentication.getPrincipal() instanceof String s) {
+            return s;
+        }
+        return null;
+    }
+
+
 
     /**
      * Get the JWT of the current user.
@@ -153,5 +158,15 @@ public class SecurityUtil {
                 .map(authentication -> authentication.getAuthorities().stream()
                         .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority)))
                 .orElse(false);
+    }
+    public Jwt checkValidRefreshToken(String refreshToken ){
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getSecretKey())
+                .macAlgorithm(JWS_ALGORITHM)
+                .build();
+        try {
+            return jwtDecoder.decode(refreshToken);
+        } catch (Exception e) {
+            throw new RuntimeException("Refresh token is not valid.");
+        }
     }
 }

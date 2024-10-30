@@ -6,8 +6,10 @@ import com.joblinker.domain.dto.SearchCriteria;
 import com.joblinker.repository.GenericSpecification;
 import com.joblinker.service.CompanyService;
 import com.joblinker.util.annotation.ApiMessage;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,32 +33,43 @@ public class CompanyController {
         com.joblinker.domain.Company newCompany = companyService.saveCompany(company);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
-    @PutMapping("/companies/{companyId}")
+    @PutMapping("/companies")
     public ResponseEntity<Company> updateCompany(
-            @PathVariable Long companyId,
             @Valid @RequestBody Company reqCompany){
 
-        Company updatedCompany = companyService.updateCompany(companyId, reqCompany);
+        Company updatedCompany = this.companyService.updateCompany(reqCompany);
 
         return updatedCompany != null
                 ? ResponseEntity.ok(updatedCompany)
                 : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/companies")
-    @ApiMessage("fetch companys")
-    public ResponseEntity<ResultPaginationDTO> getAllCompanies(
-            Pageable pageable,
-            @RequestParam(value = "key", required = false) Optional<String> keyOptional,
-            @RequestParam(value = "operation", required = false) Optional<String> operationOptional,
-            @RequestParam(value = "value", required = false) Optional<String> valueOptional
-    ) {
+//    @GetMapping("/companies")
+//    @ApiMessage("fetch companies")
+//    public ResponseEntity<ResultPaginationDTO> getAllCompanies(
+//            Pageable pageable,
+//            @RequestParam(value = "key", required = false) String key,
+//            @RequestParam(value = "operation", required = false) String operation,
+//            @RequestParam(value = "value", required = false) String value
+//    ) {
+//
+//        SearchCriteria criteria = null;
+//        if (key != null && operation != null && value != null) {
+//            criteria = new SearchCriteria(key, operation, value);
+//        }
+//
+//        GenericSpecification<Company> spec = new GenericSpecification<>(criteria);
+//
+//        return ResponseEntity.ok(companyService.getCompanyList(pageable, spec));
+//    }
+@GetMapping("/companies")
+@ApiMessage("Fetch companies")
+public ResponseEntity<ResultPaginationDTO> getCompany(
+        @Filter Specification<Company> spec,
+        Pageable pageable) {
 
-        SearchCriteria criteria = buildSearchCriteria(keyOptional, operationOptional, valueOptional);
-        GenericSpecification<Company> spec = new GenericSpecification<>(criteria);
-
-        return ResponseEntity.ok(companyService.getCompanyList(pageable, spec));
-    }
+    return ResponseEntity.ok(this.companyService.handleGetCompany(spec, pageable));
+}
     private SearchCriteria buildSearchCriteria(Optional<String> key, Optional<String> operation, Optional<String> value) {
         if (key.isPresent() && operation.isPresent() && value.isPresent()) {
             return new SearchCriteria(key.get(), operation.get(), value.get());

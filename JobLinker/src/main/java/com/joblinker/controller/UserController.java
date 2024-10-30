@@ -10,8 +10,12 @@ import com.joblinker.util.annotation.ApiMessage;
 import com.joblinker.util.error.CustomException;
 import com.joblinker.util.error.GlobalExceptionHandler;
 import com.joblinker.util.error.IdInvalidException;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
+import org.springframework.boot.autoconfigure.rsocket.RSocketProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,24 +35,32 @@ public class UserController {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
+//    @GetMapping("/users")
+//    @ApiMessage("fetch users")
+//    public ResponseEntity<ResultPaginationDTO> getAllUsers(
+//            Pageable pageable,
+//            @RequestParam(value = "key", required = false) Optional<String> keyOptional,
+//            @RequestParam(value = "operation", required = false) Optional<String> operationOptional,
+//            @RequestParam(value = "value", required = false) Optional<String> valueOptional
+//    ) {
+//        SearchCriteria searchCriteria = buildSearchCriteria(keyOptional, operationOptional, valueOptional);
+//        GenericSpecification<User> spec=new GenericSpecification<>(searchCriteria);
+//        ResultPaginationDTO users = userService.getUserList(pageable, spec);
+//        return ResponseEntity.ok(users);
+//    }
+//    private SearchCriteria buildSearchCriteria(Optional<String> key, Optional<String> operation, Optional<String> value) {
+//        if (key.isPresent() && operation.isPresent() && value.isPresent()) {
+//            return new SearchCriteria(key.get(), operation.get(), value.get());
+//        }
+//        return null;
+//    }
+
     @GetMapping("/users")
-    @ApiMessage("fetch users")
     public ResponseEntity<ResultPaginationDTO> getAllUsers(
-            Pageable pageable,
-            @RequestParam(value = "key", required = false) Optional<String> keyOptional,
-            @RequestParam(value = "operation", required = false) Optional<String> operationOptional,
-            @RequestParam(value = "value", required = false) Optional<String> valueOptional
-    ) {
-        SearchCriteria searchCriteria = buildSearchCriteria(keyOptional, operationOptional, valueOptional);
-        GenericSpecification<User> spec=new GenericSpecification<>(searchCriteria);
-        ResultPaginationDTO users = userService.getUserList(pageable, spec);
-        return ResponseEntity.ok(users);
-    }
-    private SearchCriteria buildSearchCriteria(Optional<String> key, Optional<String> operation, Optional<String> value) {
-        if (key.isPresent() && operation.isPresent() && value.isPresent()) {
-            return new SearchCriteria(key.get(), operation.get(), value.get());
-        }
-        return null;
+            @Filter Specification<User> specification,
+            Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.userService.getAllUser(specification, pageable));
     }
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id)  throws IdInvalidException{
@@ -58,7 +70,7 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User user) throws CustomException {
-        boolean isEmailExist=this.userService.isEmailExist(user.getEmail());
+        boolean isEmailExist=this.userService.checkEmailExists(user.getEmail());
         if(isEmailExist){
             throw new CustomException("Email "+user.getEmail()+" da ton tai");
         }
@@ -70,16 +82,16 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+    @ApiMessage("delete a user")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        User user = this.userService.getUserById(id);
         this.userService.deleteUser(id);
         return ResponseEntity.noContent().build(); // return 204 No Content if the user is deleted successfully
     }
 
 
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updateUser) {
-        User updatedUser = userService.updateUser(id, updateUser);
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(@RequestBody User updateUser) {
+        User updatedUser = userService.updateUser(updateUser);
         return ResponseEntity.ok(updatedUser); // return 200 OK with the updated user
     }
 
