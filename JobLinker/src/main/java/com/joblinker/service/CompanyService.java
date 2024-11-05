@@ -1,21 +1,26 @@
 package com.joblinker.service;
 
 import com.joblinker.domain.Company;
-import com.joblinker.domain.dto.ResultPaginationDTO;
+import com.joblinker.domain.User;
+import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
+import com.joblinker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CompanyService {
     private final CompanyRepository companyRepository;
-    public CompanyService(CompanyRepository companyRepository) {
+    private final UserRepository userRepository;
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
     public Company saveCompany(Company company) {
         return companyRepository.save(company);
@@ -34,26 +39,25 @@ public class CompanyService {
 //        result.setResult(pageCompanies.getContent());
 //        return result;
 //    }
-public ResultPaginationDTO handleGetCompany(Specification<Company> spec, Pageable pageable) {
-    Page<Company> pCompany = this.companyRepository.findAll(spec, pageable);
-    ResultPaginationDTO rs = new ResultPaginationDTO();
-    ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
+    public ResultPaginationDTO handleGetCompany(Specification<Company> spec, Pageable pageable) {
+        Page<Company> pCompany = this.companyRepository.findAll(spec, pageable);
+        ResultPaginationDTO rs = new ResultPaginationDTO();
+        ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
 
-    mt.setPage(pageable.getPageNumber() + 1);
-    mt.setPageSize(pageable.getPageSize());
-
-    mt.setPages(pCompany.getTotalPages());
-    mt.setTotal(pCompany.getTotalElements());
-
-    rs.setMeta(mt);
-    rs.setResult(pCompany.getContent());
-    return rs;
+        mt.setPage(pageable.getPageNumber() + 1);
+        mt.setPageSize(pageable.getPageSize());
+        mt.setPages(pCompany.getTotalPages());
+        mt.setTotal(pCompany.getTotalElements());
+        rs.setMeta(mt);
+        rs.setResult(pCompany.getContent());
+        return rs;
 }
 
     public Company getCompanyById(Long id) {
         return companyRepository.findById(id).orElse(null);
     }
     public Company updateCompany(Company company) {
+        //use option to avoid nullpointexception
         Optional<Company> companyOptional = this.companyRepository.findById(company.getId());
         if(companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();
@@ -65,16 +69,13 @@ public ResultPaginationDTO handleGetCompany(Specification<Company> spec, Pageabl
         }
         return null;
     }
-    public boolean deleteCompany(Long id) {
-        if(!companyRepository.existsById(id)){
-            throw new EntityNotFoundException("Company with ID:" + id + "does not exist");
+    public void deleteCompany(Long id) {
+        Optional<Company> optionalCompany= this.companyRepository.findById(id);
+        if (optionalCompany.isPresent()) {
+            Company company= optionalCompany.get();
+            List<User> users=this.userRepository.findByCompany(company);
+            users.forEach(user -> user.setCompany(null));
         }
-        try{
-            companyRepository.deleteById(id);
-            return true;
-        }catch(Exception e){
-            throw new RuntimeException("Failed to delete company with ID:" + id);
-        }
+        this.companyRepository.deleteById(id);
     }
-
 }

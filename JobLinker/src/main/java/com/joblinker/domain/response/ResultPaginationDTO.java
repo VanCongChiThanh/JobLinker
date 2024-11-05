@@ -1,4 +1,4 @@
-package com.joblinker.domain.dto;
+package com.joblinker.domain.response;
 
 import lombok.Getter;
 import lombok.Setter;

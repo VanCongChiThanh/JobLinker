@@ -1,37 +1,45 @@
 package com.joblinker.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joblinker.util.SecurityUtil;
+import com.joblinker.util.constant.LevelEnum;
+import com.joblinker.util.constant.LocationEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+
 @Getter
 @Setter
 @Entity
-@Table(name="companies")
-public class Company {
+@Table(name = "jobs")
+public class Job {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    @NotBlank(message="name is required")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String name;
-    @Column(columnDefinition="MEDIUMTEXT")
+    @ManyToMany
+    @JoinTable(name="job_skill",
+            joinColumns =@JoinColumn(name="job_id"),
+            inverseJoinColumns = @JoinColumn(name="skill_id"))
+    List<Skill> skills;
+    private double salary;
+    private int quantity;
+    @Enumerated(EnumType.STRING)
+    private LevelEnum level;
+    @Lob
     private String description;
-    private String address;
-    private String logo;
-//    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss a",timezone="GMT+7")
+    private Instant startTime;
+    private Instant endTime;
+    private boolean active;
+    @Enumerated(EnumType.STRING)
+    private LocationEnum location;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
-    @JsonIgnore
-    @OneToMany(mappedBy="company",fetch = FetchType.LAZY)
-    List<User> users;
     @PrePersist
     public void handleBeforeCreate() {
         this.createdAt = Instant.now();

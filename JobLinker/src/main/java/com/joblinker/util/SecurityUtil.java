@@ -1,6 +1,6 @@
 package com.joblinker.util;
 
-import com.joblinker.domain.dto.ResLoginDTO;
+import com.joblinker.domain.response.ResLoginDTO;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

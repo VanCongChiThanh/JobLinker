@@ -1,6 +1,6 @@
 package com.joblinker.util;
 
-import com.joblinker.domain.RestResponse;
+import com.joblinker.domain.response.RestResponse;
 import com.joblinker.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;

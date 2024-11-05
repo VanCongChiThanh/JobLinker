@@ -1,4 +1,4 @@
-package com.joblinker.domain.dto;
+package com.joblinker.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
 

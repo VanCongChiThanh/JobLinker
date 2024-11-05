@@ -1,6 +1,6 @@
 package com.joblinker.util.error;
 
-import com.joblinker.domain.RestResponse;
+import com.joblinker.domain.response.RestResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

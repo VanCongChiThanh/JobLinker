@@ -1,6 +1,7 @@
-package com.joblinker.service;
+package com.joblinker.config;
 
 import com.joblinker.domain.User;
+import com.joblinker.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

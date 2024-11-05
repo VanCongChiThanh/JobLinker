@@ -1,4 +1,4 @@
-package com.joblinker.domain;
+package com.joblinker.domain.response;
 
 public class RestResponse<T> {
     private int statusCode;

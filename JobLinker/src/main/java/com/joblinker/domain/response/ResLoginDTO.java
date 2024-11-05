@@ -1,4 +1,4 @@
-package com.joblinker.domain.dto;
+package com.joblinker.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

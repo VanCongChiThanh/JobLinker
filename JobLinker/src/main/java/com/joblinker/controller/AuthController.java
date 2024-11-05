@@ -1,14 +1,12 @@
 package com.joblinker.controller;
 
 import com.joblinker.domain.User;
-import com.joblinker.domain.dto.LoginDTO;
-import com.joblinker.domain.dto.ResLoginDTO;
+import com.joblinker.domain.request.LoginDTO;
+import com.joblinker.domain.response.ResLoginDTO;
 import com.joblinker.service.UserService;
 import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.annotation.ApiMessage;
 import com.joblinker.util.error.CustomException;
-import com.joblinker.util.error.GlobalExceptionHandler;
-import com.joblinker.util.error.IdInvalidException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import javax.sound.midi.InvalidMidiDataException;
 
 @RestController
 @RequestMapping("/api/v1")

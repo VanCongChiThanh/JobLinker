@@ -1,9 +1,8 @@
 package com.joblinker.controller;
 
 import com.joblinker.domain.Company;
-import com.joblinker.domain.dto.ResultPaginationDTO;
+import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.domain.dto.SearchCriteria;
-import com.joblinker.repository.GenericSpecification;
 import com.joblinker.service.CompanyService;
 import com.joblinker.util.annotation.ApiMessage;
 import com.turkraft.springfilter.boot.Filter;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +31,7 @@ public class CompanyController {
         com.joblinker.domain.Company newCompany = companyService.saveCompany(company);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
+
     @PutMapping("/companies")
     public ResponseEntity<Company> updateCompany(
             @Valid @RequestBody Company reqCompany){
@@ -62,14 +61,13 @@ public class CompanyController {
 //
 //        return ResponseEntity.ok(companyService.getCompanyList(pageable, spec));
 //    }
-@GetMapping("/companies")
-@ApiMessage("Fetch companies")
-public ResponseEntity<ResultPaginationDTO> getCompany(
+     @GetMapping("/companies")
+     @ApiMessage("Fetch companies")
+     public ResponseEntity<ResultPaginationDTO> getCompany(
         @Filter Specification<Company> spec,
         Pageable pageable) {
-
-    return ResponseEntity.ok(this.companyService.handleGetCompany(spec, pageable));
-}
+        return ResponseEntity.ok(this.companyService.handleGetCompany(spec, pageable));
+     }
     private SearchCriteria buildSearchCriteria(Optional<String> key, Optional<String> operation, Optional<String> value) {
         if (key.isPresent() && operation.isPresent() && value.isPresent()) {
             return new SearchCriteria(key.get(), operation.get(), value.get());
@@ -81,6 +79,7 @@ public ResponseEntity<ResultPaginationDTO> getCompany(
     public ResponseEntity<Company> getCompanyById(@PathVariable Long companyId) {
         return ResponseEntity.ok(companyService.getCompanyById(companyId));
     }
+
     @DeleteMapping("/companies/{companyId}")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long companyId) {
          this.companyService.deleteCompany(companyId);
