@@ -1,5 +1,6 @@
 package com.joblinker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joblinker.util.SecurityUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +20,8 @@ public class Skill {
     private Long id;
     @NotBlank
     private String name;
-    @ManyToMany(mappedBy = "skills")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skills")
+    @JsonIgnore
     List<Job> jobs;
     private Instant createdAt;
     private Instant updatedAt;

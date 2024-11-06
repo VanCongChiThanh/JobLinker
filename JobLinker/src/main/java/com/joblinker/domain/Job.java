@@ -1,5 +1,7 @@
 package com.joblinker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.constant.LevelEnum;
 import com.joblinker.util.constant.LocationEnum;
@@ -20,7 +22,8 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"jobs"})
     @JoinTable(name="job_skill",
             joinColumns =@JoinColumn(name="job_id"),
             inverseJoinColumns = @JoinColumn(name="skill_id"))
