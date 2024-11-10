@@ -23,12 +23,13 @@ public class Job {
     private long id;
     private String name;
     @ManyToMany(fetch=FetchType.LAZY)
-    @JsonIgnoreProperties(value = {"jobs"})
+    @JsonIgnoreProperties(value = {"jobs","createdAt","updatedAt","updatedBy","createdBy"})
     @JoinTable(name="job_skill",
             joinColumns =@JoinColumn(name="job_id"),
             inverseJoinColumns = @JoinColumn(name="skill_id"))
     List<Skill> skills;
     @ManyToOne
+    @JsonIgnoreProperties(value = {"description","createdAt","updatedAt","createdBy","updatedBy"})
     @JoinColumn(name = "company_id")
     private Company company;
     private double salary;
