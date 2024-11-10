@@ -1,8 +1,7 @@
-package com.joblinker.domain.response;
+package com.joblinker.domain.response.User;
 
 import com.joblinker.util.constant.GenderEnum;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 @Getter

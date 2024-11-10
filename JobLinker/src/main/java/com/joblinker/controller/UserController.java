@@ -1,8 +1,8 @@
 package com.joblinker.controller;
 
 import com.joblinker.domain.User;
-import com.joblinker.domain.response.ResCreateUserDTO;
-import com.joblinker.domain.response.ResUpdateUserDTO;
+import com.joblinker.domain.response.User.ResCreateUserDTO;
+import com.joblinker.domain.response.User.ResUpdateUserDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.service.UserService;
 import com.joblinker.util.annotation.ApiMessage;

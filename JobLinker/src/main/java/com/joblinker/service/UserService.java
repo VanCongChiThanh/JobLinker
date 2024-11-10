@@ -2,9 +2,9 @@ package com.joblinker.service;
 
 import com.joblinker.domain.Company;
 import com.joblinker.domain.User;
-import com.joblinker.domain.response.ResCreateUserDTO;
-import com.joblinker.domain.response.ResUpdateUserDTO;
-import com.joblinker.domain.response.ResUserDTO;
+import com.joblinker.domain.response.User.ResCreateUserDTO;
+import com.joblinker.domain.response.User.ResUpdateUserDTO;
+import com.joblinker.domain.response.User.ResUserDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.UserRepository;

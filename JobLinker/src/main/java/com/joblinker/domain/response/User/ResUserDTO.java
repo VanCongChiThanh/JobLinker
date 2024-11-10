@@ -1,4 +1,4 @@
-package com.joblinker.domain.response;
+package com.joblinker.domain.response.User;
 
 import com.joblinker.util.constant.GenderEnum;
 import lombok.AllArgsConstructor;

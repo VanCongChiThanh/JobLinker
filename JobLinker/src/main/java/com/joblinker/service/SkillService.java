@@ -1,7 +1,6 @@
 package com.joblinker.service;
 
 import com.joblinker.domain.Skill;
-import com.joblinker.domain.response.ResCreateUserDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.JobRepository;
 import com.joblinker.repository.SkillRepository;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.print.attribute.standard.JobStateReason;
 import java.util.Optional;
 
 @Service
@@ -26,10 +24,17 @@ public class SkillService {
         return skillRepository.save(skill);
     }
     public void deleteSkill(Long id) {
-        if (!skillRepository.existsById(id)) {
-            throw new CustomException("Skill with id = " + id + "not found");
+        // delete job (inside job_skill table)
+        Optional<Skill> skillOptional = this.skillRepository.findById(id);
+        if(!skillOptional.isPresent()) {
+            throw new CustomException("Skill with id = " + id + " is not found");
         }
-        skillRepository.deleteById(id);
+        Skill currentSkill = skillOptional.get();
+        currentSkill.getJobs().forEach(job -> job.getSkills().remove(currentSkill));
+
+        // delete skill
+        this.skillRepository.delete(currentSkill);
+
     }
 
     public ResultPaginationDTO getAllSkills(Specification<Skill> spec, Pageable pageable){

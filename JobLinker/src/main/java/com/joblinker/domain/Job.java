@@ -28,6 +28,9 @@ public class Job {
             joinColumns =@JoinColumn(name="job_id"),
             inverseJoinColumns = @JoinColumn(name="skill_id"))
     List<Skill> skills;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
     private double salary;
     private int quantity;
     @Enumerated(EnumType.STRING)
