@@ -43,6 +43,10 @@ public class Job {
     private boolean active;
     @Enumerated(EnumType.STRING)
     private LocationEnum location;
+
+    @OneToMany(mappedBy ="job",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Resume> resumes;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;

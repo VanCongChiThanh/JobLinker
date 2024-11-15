@@ -37,7 +37,6 @@ public class FileService {
     }
 
     public String store(MultipartFile file, String folder) throws URISyntaxException, IOException {
-        // create unique filename
         String finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
 
         URI uri = new URI(baseURI + folder + "/" + finalName);

@@ -1,6 +1,7 @@
 package com.joblinker.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.constant.GenderEnum;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -34,9 +37,15 @@ public class User {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @OneToMany(mappedBy = "user",fetch=FetchType.LAZY)
+    @JsonIgnore
+    private List<Resume> resumes;
+
     @PrePersist
     public void handleBeforeCreate() {
         this.createdAt = Instant.now();
