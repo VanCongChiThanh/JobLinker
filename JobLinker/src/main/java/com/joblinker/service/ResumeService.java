@@ -37,7 +37,6 @@ public class ResumeService {
     }
 
 
-
     public boolean checkResumeExistByUserAndJob(Resume resume) {
         // check user by id
         if (resume.getUser() == null)
@@ -55,7 +54,12 @@ public class ResumeService {
 
         return true;
     }
-
+    public void delete(Long id){
+        if(!this.resumeRepository.existsById(id)){
+            throw new IdInvalidException("Resume with ID:" + id + " not found");
+        }
+        this.resumeRepository.deleteById(id);
+    }
     public ResCreateResumeDTO create(Resume resume) throws IdInvalidException {
         boolean isIdExist = this.checkResumeExistByUserAndJob(resume);
         if (!isIdExist) {

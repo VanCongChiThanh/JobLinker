@@ -45,4 +45,10 @@ public class ResumeController {
     public ResponseEntity<ResultPaginationDTO> getAll(Pageable pageable) {
         return ResponseEntity.ok().body(this.resumeService.getResumes(null, pageable));
     }
+    @DeleteMapping("/resumes/{id}")
+    @ApiMessage("Delete a resume by id")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id){
+        this.resumeService.delete(id);
+        return ResponseEntity.ok().body(null);
+    }
 }
