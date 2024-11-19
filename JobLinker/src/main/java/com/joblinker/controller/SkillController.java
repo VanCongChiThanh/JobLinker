@@ -27,6 +27,7 @@ public class SkillController {
         Skill newSkill=skillService.createSkill(skill);
         return ResponseEntity.status(HttpStatus.CREATED).body(newSkill);
     }
+
     @PutMapping("/skills")
     @ApiMessage("update skill")
     public ResponseEntity<Skill> updateSkill(@Valid @RequestBody Skill skill) {

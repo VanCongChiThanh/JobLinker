@@ -5,6 +5,7 @@ import com.joblinker.domain.User;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.UserRepository;
+import com.joblinker.util.error.IdInvalidException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,7 @@ public class CompanyService {
 }
 
     public Company getCompanyById(Long id) {
-        return companyRepository.findById(id).orElse(null);
+        return companyRepository.findById(id).orElseThrow(()->new IdInvalidException("Company id not found"));
     }
     public Company updateCompany(Company company) {
         //use option to avoid nullpointexception

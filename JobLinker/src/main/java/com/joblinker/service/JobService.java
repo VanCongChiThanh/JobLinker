@@ -90,6 +90,7 @@ public class JobService {
         }
         existingJob.setName(job.getName());
         existingJob.setSalary(job.getSalary());
+        existingJob.setDescription(job.getDescription());
         existingJob.setCompany(job.getCompany());
         existingJob.setQuantity(job.getQuantity());
         existingJob.setLocation(job.getLocation());
