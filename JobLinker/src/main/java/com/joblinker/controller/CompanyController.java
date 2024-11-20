@@ -32,16 +32,18 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
 
-    @PutMapping("/companies")
+    @PutMapping("/companies/{id}")
     public ResponseEntity<Company> updateCompany(
-            @Valid @RequestBody Company reqCompany){
+            @PathVariable Long id,
+            @Valid @RequestBody Company reqCompany) {
 
-        Company updatedCompany = this.companyService.updateCompany(reqCompany);
+        Company updatedCompany = this.companyService.updateCompany(id, reqCompany);
 
         return updatedCompany != null
                 ? ResponseEntity.ok(updatedCompany)
                 : ResponseEntity.notFound().build();
     }
+
 
 //    @GetMapping("/companies")
 //    @ApiMessage("fetch companies")

@@ -75,11 +75,10 @@ public class ResumeService {
 
         return res;
     }
-    public ResUpdateResumeDTO update(Resume resume) {
-        Resume existingResume = this.fetchById(resume.getId());
+    public ResUpdateResumeDTO update(Long id, Resume resume) {
+        Resume existingResume = this.fetchById(id);
         existingResume.setStatus(resume.getStatus());
         Resume updatedResume = this.resumeRepository.save(existingResume);
-
         ResUpdateResumeDTO res = new ResUpdateResumeDTO();
         res.setUpdatedAt(updatedResume.getUpdatedAt());
         res.setUpdatedBy(updatedResume.getUpdatedBy());

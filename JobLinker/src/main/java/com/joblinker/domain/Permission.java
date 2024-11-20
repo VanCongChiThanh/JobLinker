@@ -1,5 +1,6 @@
 package com.joblinker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -19,19 +20,20 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "name không được để trống")
+    @NotBlank(message = "name is required")
     private String name;
 
-    @NotBlank(message = "apiPath không được để trống")
+    @NotBlank(message = "apiPath is required")
     private String apiPath;
 
-    @NotBlank(message = "method không được để trống")
+    @NotBlank(message = "method is required")
     private String method;
 
-    @NotBlank(message = "module không được để trống")
+    @NotBlank(message = "module is required")
     private String module;
 
     @ManyToMany(mappedBy = "permissions",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Role> rolse;
     public Permission(String name, String apiPath, String method, String module) {
         this.name = name;

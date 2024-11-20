@@ -1,5 +1,6 @@
 package com.joblinker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joblinker.util.SecurityUtil;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Role {
     private List<User> users;
 
     @ManyToMany
+    @JsonIgnoreProperties(value = {"roles"})
     @JoinTable(
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),

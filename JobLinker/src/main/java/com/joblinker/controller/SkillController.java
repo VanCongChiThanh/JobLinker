@@ -28,10 +28,12 @@ public class SkillController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newSkill);
     }
 
-    @PutMapping("/skills")
+    @PutMapping("/skills/{id}")
     @ApiMessage("update skill")
-    public ResponseEntity<Skill> updateSkill(@Valid @RequestBody Skill skill) {
-        Skill updatedSkill = skillService.updateSkill(skill);
+    public ResponseEntity<Skill> updateSkill(
+            @PathVariable Long id,
+            @Valid @RequestBody Skill skill) {
+        Skill updatedSkill = skillService.updateSkill(id, skill);
         return ResponseEntity.ok().body(updatedSkill);
     }
 

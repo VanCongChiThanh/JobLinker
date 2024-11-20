@@ -69,29 +69,29 @@ public class JobService {
         }
         return dto;
     }
-    public ResUpdateJobDTO updateJob(Job job) {
-        Job existingJob =this.jobRepository.findById(job.getId())
+    public ResUpdateJobDTO updateJob(Long id,Job job) {
+        Job existingJob =this.jobRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Job with id = " + job.getId() + " not found"));
 
-        if(job.getSkills()!=null){
+        if (job.getSkills() != null) {
             List<Long> reqSkills = job.getSkills()
-                    .stream().map(x -> x.getId())
+                    .stream().map(Skill::getId)
                     .collect(Collectors.toList());
             List<Skill> dbSkills = this.skillRepositor.findAllById(reqSkills);
             if (dbSkills.size() != reqSkills.size()) {
                 throw new CustomException("Some skills were not found in the database.");
             }
-            job.setSkills(dbSkills);
+            existingJob.setSkills(dbSkills);
         }
+
         if (job.getCompany() != null) {
             Company company = this.companyRepository.findById(job.getCompany().getId())
-                    .orElseThrow(()->new CustomException("Company not found"));
-            job.setCompany(company);
+                    .orElseThrow(() -> new CustomException("Company not found"));
+            existingJob.setCompany(company);
         }
         existingJob.setName(job.getName());
         existingJob.setSalary(job.getSalary());
         existingJob.setDescription(job.getDescription());
-        existingJob.setCompany(job.getCompany());
         existingJob.setQuantity(job.getQuantity());
         existingJob.setLocation(job.getLocation());
         existingJob.setLevel(job.getLevel());

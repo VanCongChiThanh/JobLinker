@@ -59,9 +59,9 @@ public class SkillService {
     public boolean isNameExist(String name){
         return skillRepository.existsByName(name);
     }
-    public Skill updateSkill(Skill skill) {
-        Skill currentSkill = skillRepository.findById(skill.getId())
-                .orElseThrow(() -> new CustomException("Skill id = " + skill.getId() + "is not exist"));
+    public Skill updateSkill(Long id, Skill skill) {
+        Skill currentSkill = skillRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Skill id = " + id + " is not exist"));
 
         if (skill.getName() != null && isNameExist(skill.getName())) {
             throw new CustomException("Skill name = " + skill.getName() + " is existing");
@@ -70,6 +70,5 @@ public class SkillService {
         currentSkill.setName(skill.getName());
         return skillRepository.save(currentSkill);
     }
-
 
 }

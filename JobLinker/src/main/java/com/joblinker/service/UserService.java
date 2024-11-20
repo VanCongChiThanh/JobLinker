@@ -79,20 +79,18 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User with email: " + email + " not found"));
     }
-    public User updateUser(User updateUser)
-    {
-        User existingUser = this.getUserById(updateUser.getId());
-        if (existingUser != null){
+    public User updateUser(Long id, User updateUser) {
+        User existingUser = this.getUserById(id);
+        if (existingUser != null) {
             existingUser.setName(updateUser.getName());
             existingUser.setAge(updateUser.getAge());
             existingUser.setAddress(updateUser.getAddress());
             existingUser.setGender(updateUser.getGender());
-
-            if(updateUser.getCompany()!=null){
-                Optional<Company>  company=this.companyRepository.findById(updateUser.getCompany().getId());
-                existingUser.setCompany(company.isPresent()? company.get() : null);
+            if (updateUser.getCompany() != null) {
+                Optional<Company> company = this.companyRepository.findById(updateUser.getCompany().getId());
+                existingUser.setCompany(company.isPresent() ? company.get() : null);
             }
-            existingUser=this.userRepository.save(existingUser);
+            existingUser = this.userRepository.save(existingUser);
         }
         return existingUser;
     }

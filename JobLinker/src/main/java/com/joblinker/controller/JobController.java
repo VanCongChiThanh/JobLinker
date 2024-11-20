@@ -25,9 +25,11 @@ public class JobController {
     public ResponseEntity<ResCreateJobDTO> createJob(@Valid @RequestBody Job job){
         return ResponseEntity.ok().body(jobService.createJob(job));
     }
-    @PutMapping("/jobs")
-    public ResponseEntity<ResUpdateJobDTO> updateJob(@Valid @RequestBody Job job) {
-        return ResponseEntity.ok(jobService.updateJob(job));
+    @PutMapping("/jobs/{id}")
+    public ResponseEntity<ResUpdateJobDTO> updateJob(
+            @PathVariable Long id,
+            @Valid @RequestBody Job job) {
+        return ResponseEntity.ok(jobService.updateJob(id, job));
     }
     @GetMapping("/jobs/{jobId}")
     @ApiMessage("Get job by id")

@@ -57,9 +57,9 @@ public class CompanyService {
     public Company getCompanyById(Long id) {
         return companyRepository.findById(id).orElseThrow(()->new IdInvalidException("Company id not found"));
     }
-    public Company updateCompany(Company company) {
+    public Company updateCompany(Long id,Company company) {
         //use option to avoid nullpointexception
-        Optional<Company> companyOptional = this.companyRepository.findById(company.getId());
+        Optional<Company> companyOptional = this.companyRepository.findById(id);
         if(companyOptional.isPresent()) {
             Company existingCompany = companyOptional.get();
             existingCompany.setName(company.getName());

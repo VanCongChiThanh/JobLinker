@@ -34,10 +34,12 @@ public class ResumeController {
     public ResponseEntity<ResFetchResumeDTO> fetchById(@PathVariable("id") long id) {
         return ResponseEntity.ok().body(this.resumeService.getResume(id));
     }
-    @PutMapping("/resumes")
+    @PutMapping("/resumes/{id}")
     @ApiMessage("Update a resume")
-    public ResponseEntity<ResUpdateResumeDTO> update(@RequestBody Resume resume) {
-        return ResponseEntity.ok().body(this.resumeService.update(resume));
+    public ResponseEntity<ResUpdateResumeDTO> update(
+            @PathVariable Long id,
+            @RequestBody Resume resume) {
+        return ResponseEntity.ok().body(this.resumeService.update(id, resume));
     }
 
     @GetMapping("/resumes")
