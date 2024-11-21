@@ -1,6 +1,7 @@
 package com.joblinker.controller;
 
 import com.joblinker.domain.Role;
+import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.service.RoleService;
 import com.joblinker.util.annotation.ApiMessage;
 import com.turkraft.springfilter.boot.Filter;
@@ -28,13 +29,13 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.roleService.create(role));
     }
 
-    // Fetch all roles with optional filtering and pagination
-//    @GetMapping("/roles")
-//    @ApiMessage("Fetch roles")
-//    public ResponseEntity<List<Role>> getRoles(
-//            @Filter Specification<Role> spec, Pageable pageable) {
-//        return ResponseEntity.ok(this.roleService.getRoles(spec, pageable));
-//    }
+    //Fetch all roles with optional filtering and pagination
+    @GetMapping("/roles")
+    @ApiMessage("Fetch roles")
+    public ResponseEntity<ResultPaginationDTO> getRoles(
+            @Filter Specification<Role> spec, Pageable pageable) {
+        return ResponseEntity.ok(this.roleService.getRoles(spec, pageable));
+    }
 
     // Fetch a role by ID
     @GetMapping("/roles/{id}")

@@ -2,11 +2,16 @@ package com.joblinker.service;
 
 import com.joblinker.domain.Permission;
 import com.joblinker.domain.Role;
+import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.PermissionRepository;
 import com.joblinker.repository.RoleRepository;
 import com.joblinker.util.error.CustomException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -62,6 +67,20 @@ public class RoleService {
             this.roleRepository.save(existingRole);
         }
         this.roleRepository.deleteById(id);
+    }
+    public ResultPaginationDTO getRoles(Specification<Role> spec, Pageable pageable){
+        Page<Role> pRole=this.roleRepository.findAll(spec,pageable);
+        ResultPaginationDTO rs=new ResultPaginationDTO();
+        ResultPaginationDTO.Meta mt=new ResultPaginationDTO.Meta();
+
+        mt.setPage(pageable.getPageNumber()+1);
+        mt.setPageSize(pageable.getPageSize());
+        mt.setPages(pRole.getTotalPages());
+        mt.setTotal(pRole.getTotalElements());
+
+        rs.setMeta(mt);
+        rs.setResult(pRole.getContent());
+        return rs;
     }
 
 }
