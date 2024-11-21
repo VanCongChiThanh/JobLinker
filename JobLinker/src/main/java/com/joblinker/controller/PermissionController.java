@@ -20,16 +20,19 @@ public class PermissionController {
     public PermissionController(PermissionService permissionService) {
         this.permissionService = permissionService;
     }
+
     @PostMapping("/permissions")
     public ResponseEntity<Permission> create(@Valid @RequestBody Permission permission){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.permissionService.create(permission));
     }
+
     @DeleteMapping("/permissions/{id}")
     @ApiMessage("delete a permission")
     public ResponseEntity<Void> delete(@PathVariable("id") long id)  {
         this.permissionService.delete(id);
         return ResponseEntity.ok().body(null);
     }
+
     @GetMapping("/permissions")
     @ApiMessage("Fetch permissions")
     public ResponseEntity<ResultPaginationDTO> getPermissions(
@@ -37,6 +40,7 @@ public class PermissionController {
 
         return ResponseEntity.ok(this.permissionService.getPermissions(spec, pageable));
     }
+
     @PutMapping("/permissions/{id}")
     @ApiMessage("Update a permission")
     public ResponseEntity<Permission> update(@PathVariable("id") Long id, @Valid @RequestBody Permission permission) {

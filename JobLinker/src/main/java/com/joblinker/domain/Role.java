@@ -18,6 +18,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String description;
+    private boolean active;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
