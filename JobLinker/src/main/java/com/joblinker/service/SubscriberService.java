@@ -47,5 +47,16 @@ public class SubscriberService {
         }
         return subscriberRepository.save(subscriber);
     }
-
+    public Subscriber update(Long id, Subscriber subscriber){
+        Subscriber existingSubscriber = this.findById(id);
+        if(subscriber.getSkills() != null){
+            List<Long> reqSkills = subscriber.getSkills()
+                   .stream().map(x -> x.getId())
+                   .collect(Collectors.toList());
+            List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
+            existingSubscriber.setSkills(dbSkills);
+        }
+        existingSubscriber.setEmail(subscriber.getEmail());
+        return subscriberRepository.save(existingSubscriber);
+    }
 }
