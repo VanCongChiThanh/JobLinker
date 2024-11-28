@@ -8,10 +8,12 @@ import com.joblinker.domain.response.User.ResUserDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.UserRepository;
+import com.joblinker.util.error.CustomException;
 import com.joblinker.util.error.IdInvalidException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,30 +25,39 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User saveUser(User user) {
-        if(user.getCompany() != null){
-            Optional<Company>  company=this.companyRepository.findById(user.getCompany().getId());
-            user.setCompany(company.isPresent() ?company.get() : null);
+    public User createUser(User user) {
+        String hashedPassword = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        // Check if email already exists
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new CustomException("Email already exists");
         }
-        return this.userRepository.save(user);
+
+        // Associate company if provided
+        if (user.getCompany() != null) {
+            Company company = companyRepository.findById(user.getCompany().getId())
+                    .orElse(null);
+            user.setCompany(company);
+        }
+
+        // Save user and return
+        return userRepository.save(user);
     }
     public boolean deleteUser(long userId) {
         if (userRepository.existsById(userId)) {
-            userRepository.deleteById(userId);  // delete user from the database
-            return true;  // deletion successful
+            userRepository.deleteById(userId);
+            return true;
         } else {
-            return false;  // user not found
+            return false;
         }
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();  // fetch all users from the database
     }
     public ResultPaginationDTO getAllUser(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);

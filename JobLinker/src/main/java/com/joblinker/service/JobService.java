@@ -144,7 +144,4 @@ public class JobService {
                 .orElseThrow(() -> new CustomException("Job with id = " + id + " not found, could not delete"));
         this.jobRepository.deleteById(id);
     }
-
-
-
 }

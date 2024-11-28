@@ -62,16 +62,14 @@ public class UserController {
     }
 
     @PostMapping("/users")
+    @ApiMessage("create a new user")
     public ResponseEntity<ResCreateUserDTO> createUser(@Valid @RequestBody User user) throws CustomException {
-        boolean isEmailExist=this.userService.checkEmailExists(user.getEmail());
-        if(isEmailExist){
-            throw new CustomException("Email "+user.getEmail()+" da ton tai");
-        }
+        // Create and save user
+        User newUser = userService.createUser(user);
 
-        String hashPassword=this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashPassword);
-        User newUser=this.userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(newUser));
+        // Convert to DTO and return response
+        ResCreateUserDTO responseDTO = userService.convertToResCreateUserDTO(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @DeleteMapping("/users/{id}")
