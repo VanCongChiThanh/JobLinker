@@ -166,10 +166,10 @@ public class AuthController {
 
         return ResponseEntity.ok().body(userGetAccount);
     }
-    @PostMapping()
+
+    @PostMapping("/auth/register")
+    @ApiMessage("Register")
     public ResponseEntity<ResCreateUserDTO> register(@Valid @RequestBody User user){
-
-
         // Create and save user
         User newUser = userService.createUser(user);
 
