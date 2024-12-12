@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -87,6 +88,10 @@ public class CompanyController {
          this.companyService.deleteCompany(companyId);
 
         return ResponseEntity.ok(null);
+    }
+    @GetMapping("/companies/top-companies")
+    public List<Company> getTop9Companies() {
+        return companyService.getTopCompaniesWithMostJobs(9);
     }
 
 }

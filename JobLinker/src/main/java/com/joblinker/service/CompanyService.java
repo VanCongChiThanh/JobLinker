@@ -8,6 +8,7 @@ import com.joblinker.repository.UserRepository;
 import com.joblinker.util.error.IdInvalidException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -78,5 +79,8 @@ public class CompanyService {
             users.forEach(user -> user.setCompany(null));
         }
         this.companyRepository.deleteById(id);
+    }
+    public List<Company> getTopCompaniesWithMostJobs(int limit) {
+        return companyRepository.findTopCompaniesByJobCount(PageRequest.of(0, limit));
     }
 }
