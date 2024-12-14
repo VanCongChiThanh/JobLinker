@@ -12,6 +12,7 @@ import com.joblinker.repository.SkillRepository;
 import com.joblinker.util.error.CustomException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -143,5 +144,8 @@ public class JobService {
         this.jobRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Job with id = " + id + " not found, could not delete"));
         this.jobRepository.deleteById(id);
+    }
+    public List<Job> getTopJobsWithMostResumes(int limit) {
+        return jobRepository.findTopJobsByResumesCount(Pageable.ofSize(limit));
     }
 }

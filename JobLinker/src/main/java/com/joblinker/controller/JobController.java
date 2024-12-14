@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1")
 public class JobController {
@@ -49,5 +51,10 @@ public class JobController {
     public ResponseEntity<Void> delete(@PathVariable("id") long id) {
         this.jobService.delete(id);
         return ResponseEntity.ok().body(null);
+    }
+    @GetMapping("/jobs/top-jobs")
+    @ApiMessage("Get top hot jobs")
+    public ResponseEntity<List<Job>> getTopJobs(){
+        return ResponseEntity.ok(jobService.getTopJobsWithMostResumes(9));
     }
 }

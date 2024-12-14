@@ -90,8 +90,8 @@ public class CompanyController {
         return ResponseEntity.ok(null);
     }
     @GetMapping("/companies/top-companies")
-    public List<Company> getTop9Companies() {
-        return companyService.getTopCompaniesWithMostJobs(9);
+    public List<Company> getTopCompanies() {
+        return companyService.getTopCompaniesWithMostJobs(6);
     }
 
 }
