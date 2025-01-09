@@ -54,13 +54,14 @@ public class AuthController {
         if(currentUserDB !=null){
             ResLoginDTO.UserLogin userLogin=new ResLoginDTO.UserLogin(currentUserDB.getId(),
                                                                       currentUserDB.getEmail(),
-                                                                      currentUserDB.getName());
+                                                                      currentUserDB.getName(),
+                                                                      currentUserDB.getRole());
             res.setUser(userLogin);
         }
         String access_token=this.securityUtil.createAccessToken(authentication.getName(), res);
+        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getUsername(), res);
         res.setAccessToken(access_token);
 
-       String refresh_token=this.securityUtil.createRefreshToken(loginDTO.getUsername(),res);
        this.userService.updateUserToken(refresh_token,loginDTO.getUsername());
 
        ResponseCookie resCookie=ResponseCookie
@@ -95,7 +96,8 @@ public class AuthController {
         if(currentUserDB !=null){
             ResLoginDTO.UserLogin userLogin=new ResLoginDTO.UserLogin(currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName());
+                    currentUserDB.getName(),
+                    currentUserDB.getRole());
             res.setUser(userLogin);
         }
         String access_token=this.securityUtil.createAccessToken(email, res);
@@ -160,7 +162,7 @@ public class AuthController {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
-
+            userLogin.setRole(currentUserDB.getRole());
             userGetAccount.setUser(userLogin);
         }
 

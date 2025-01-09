@@ -91,7 +91,7 @@ public class CompanyController {
     }
     @GetMapping("/companies/top-companies")
     public List<Company> getTopCompanies() {
-        return companyService.getTopCompaniesWithMostJobs(6);
+        return companyService.getTopCompaniesWithMostJobs(12);
     }
 
 }

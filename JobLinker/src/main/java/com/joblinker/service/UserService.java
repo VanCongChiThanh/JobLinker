@@ -1,6 +1,7 @@
 package com.joblinker.service;
 
 import com.joblinker.domain.Company;
+import com.joblinker.domain.Role;
 import com.joblinker.domain.User;
 import com.joblinker.domain.response.User.ResCreateUserDTO;
 import com.joblinker.domain.response.User.ResUpdateUserDTO;
@@ -26,11 +27,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder) {
+    private final RoleService   roleService;
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     public User createUser(User user) {
@@ -100,6 +102,10 @@ public class UserService {
             if (updateUser.getCompany() != null) {
                 Optional<Company> company = this.companyRepository.findById(updateUser.getCompany().getId());
                 existingUser.setCompany(company.isPresent() ? company.get() : null);
+            }
+            if(updateUser.getRole() != null) {
+                Role role = this.roleService.fetchById(updateUser.getRole().getId());
+                existingUser.setRole(role != null ? role : null);
             }
             existingUser = this.userRepository.save(existingUser);
         }

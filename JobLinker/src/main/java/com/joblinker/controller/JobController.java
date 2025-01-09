@@ -55,6 +55,6 @@ public class JobController {
     @GetMapping("/jobs/top-jobs")
     @ApiMessage("Get top hot jobs")
     public ResponseEntity<List<Job>> getTopJobs(){
-        return ResponseEntity.ok(jobService.getTopJobsWithMostResumes(9));
+        return ResponseEntity.ok(jobService.getTopJobsWithMostResumes(12));
     }
 }

@@ -1,6 +1,7 @@
 package com.joblinker.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.joblinker.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class ResLoginDTO {
         private long id;
         private String email;
         private String name;
+        private Role role;
     }
 
     @Getter

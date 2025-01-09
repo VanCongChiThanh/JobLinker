@@ -1,5 +1,6 @@
 package com.joblinker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joblinker.util.SecurityUtil;
 import jakarta.persistence.*;
@@ -25,9 +26,10 @@ public class Role {
     private String createdBy;
     private String updatedBy;
     @OneToMany(mappedBy = "role",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<User> users;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = {"roles"})
     @JoinTable(
             name = "role_permissions",
