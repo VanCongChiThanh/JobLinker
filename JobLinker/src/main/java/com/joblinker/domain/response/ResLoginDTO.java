@@ -27,7 +27,6 @@ public class ResLoginDTO {
         public String getRoleName() {
             return this.role != null ? this.role.getName() : null;
         }
-
         @JsonIgnore
         private Role role;
     }

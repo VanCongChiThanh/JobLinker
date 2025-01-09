@@ -87,17 +87,41 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             this.permissionRepository.saveAll(arr);
         }
-        if (countRoles == 0) {
-            List<Permission> allPermissions = this.permissionRepository.findAll();
-
+        List<Permission> allPermissions = this.permissionRepository.findAll();
+        if (this.roleRepository.findByName("SUPER_ADMIN") == null) {
             Role adminRole = new Role();
             adminRole.setName("SUPER_ADMIN");
             adminRole.setDescription("Admin thì full permissions");
             adminRole.setActive(true);
             adminRole.setPermissions(allPermissions);
-
             this.roleRepository.save(adminRole);
+            System.out.println("SUPER_ADMIN role created.");
         }
+
+        if (this.roleRepository.findByName("EMPLOYER") == null) {
+            Role employerRole = new Role();
+            employerRole.setName("EMPLOYER");
+            employerRole.setDescription("Employer có quyền quản lý công việc và công ty của họ");
+            employerRole.setActive(true);
+            employerRole.setPermissions(allPermissions.stream()
+                    .filter(permission -> permission.getModule().equals("COMPANIES") || permission.getModule().equals("JOBS"))
+                    .toList());
+            this.roleRepository.save(employerRole);
+            System.out.println("EMPLOYER role created.");
+        }
+
+        if (this.roleRepository.findByName("USER") == null) {
+            Role userRole = new Role();
+            userRole.setName("USER");
+            userRole.setDescription("Người dùng thông thường có quyền tìm kiếm và xem thông tin công việc");
+            userRole.setActive(true);
+            userRole.setPermissions(allPermissions.stream()
+                    .filter(permission -> permission.getModule().equals("JOBS") || permission.getModule().equals("RESUMES"))
+                    .toList());
+            this.roleRepository.save(userRole);
+            System.out.println("USER role created.");
+        }
+
         if (countUsers == 0) {
             User adminUser = new User();
             adminUser.setEmail("admin@gmail.com");
