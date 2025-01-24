@@ -3,12 +3,14 @@ package com.joblinker.service;
 import com.joblinker.domain.Company;
 import com.joblinker.domain.Job;
 import com.joblinker.domain.Skill;
+import com.joblinker.domain.User;
 import com.joblinker.domain.response.Job.ResCreateJobDTO;
 import com.joblinker.domain.response.Job.ResUpdateJobDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.JobRepository;
 import com.joblinker.repository.SkillRepository;
+import com.joblinker.repository.UserRepository;
 import com.joblinker.util.error.CustomException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -27,11 +29,13 @@ public class JobService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepositor;
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public JobService(JobRepository jobRepository, SkillRepository skillRepositor, CompanyRepository companyRepository) {
+    public JobService(JobRepository jobRepository, SkillRepository skillRepositor, CompanyRepository companyRepository, UserRepository userRepository) {
         this.jobRepository = jobRepository;
         this.skillRepositor = skillRepositor;
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
     public Job getJobById(Long id) {
         return jobRepository.findById(id)
@@ -147,5 +151,18 @@ public class JobService {
     }
     public List<Job> getTopJobsWithMostResumes(int limit) {
         return jobRepository.findTopJobsByResumesCount(Pageable.ofSize(limit));
+    }
+    public List<Job> getJobsByEmployerId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException("User with id = " + userId + " not found"));
+        Company company = user.getCompany();
+        if (company == null) {
+            throw new CustomException("Company not found for user with id = " + userId);
+        }
+        List<Job> jobs = jobRepository.findByCompanyId(company.getId());
+        if (jobs.isEmpty()) {
+            throw new CustomException("No jobs found for company with id = " + company.getId());
+        }
+        return jobs;
     }
 }

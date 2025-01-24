@@ -1,10 +1,12 @@
 package com.joblinker.service;
 
 import com.joblinker.domain.Company;
+import com.joblinker.domain.Role;
 import com.joblinker.domain.User;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.repository.CompanyRepository;
 import com.joblinker.repository.UserRepository;
+import com.joblinker.util.error.CustomException;
 import com.joblinker.util.error.IdInvalidException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -83,4 +85,23 @@ public class CompanyService {
     public List<Company> getTopCompaniesWithMostJobs(int limit) {
         return companyRepository.findTopCompaniesByJobCount(PageRequest.of(0, limit));
     }
+    public Company getCompanyByUserId(Long userId) {
+        // Tìm user dựa trên userId
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IdInvalidException("User ID not found."));
+
+        // Kiểm tra vai trò của user
+        if (user.getRole() == null || !"EMPLOYER".equalsIgnoreCase(user.getRole().getName())) {
+            throw new CustomException("User does not have permission to access this resource.");
+        }
+
+        // Trả về công ty liên kết với user
+        Company company = user.getCompany();
+        if (company == null) {
+            throw new CustomException("No company associated with this user.");
+        }
+
+        return company;
+    }
+
 }

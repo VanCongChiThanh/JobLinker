@@ -57,4 +57,9 @@ public class JobController {
     public ResponseEntity<List<Job>> getTopJobs(){
         return ResponseEntity.ok(jobService.getTopJobsWithMostResumes(12));
     }
+    @GetMapping("/jobs/by-employer/{id}")
+    @ApiMessage("jobs by employer")
+    public ResponseEntity<List<Job>> getJobsbyEmployer(@PathVariable("id") long id) {
+        return ResponseEntity.ok().body(this.jobService.getJobsByEmployerId(id));
+    }
 }

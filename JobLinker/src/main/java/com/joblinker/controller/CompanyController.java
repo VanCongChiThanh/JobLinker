@@ -1,6 +1,7 @@
 package com.joblinker.controller;
 
 import com.joblinker.domain.Company;
+import com.joblinker.domain.User;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.domain.dto.SearchCriteria;
 import com.joblinker.service.CompanyService;
@@ -92,6 +93,11 @@ public class CompanyController {
     @GetMapping("/companies/top-companies")
     public List<Company> getTopCompanies() {
         return companyService.getTopCompaniesWithMostJobs(12);
+    }
+    @GetMapping("/companies/by-employer/{userId}")
+    public ResponseEntity<Company> getCompanyByUserId(@PathVariable Long userId) {
+        Company company = companyService.getCompanyByUserId(userId);
+        return ResponseEntity.ok(company);
     }
 
 }

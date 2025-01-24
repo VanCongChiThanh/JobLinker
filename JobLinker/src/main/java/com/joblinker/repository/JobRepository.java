@@ -14,4 +14,6 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job,Long> , JpaSpecificationExecutor<Job> {
     @Query("SELECT j FROM Job j LEFT JOIN j.resumes r GROUP BY j ORDER BY COUNT(r) DESC")
     List<Job> findTopJobsByResumesCount(Pageable pageable);
+
+    List<Job> findByCompanyId(Long id);
 }
