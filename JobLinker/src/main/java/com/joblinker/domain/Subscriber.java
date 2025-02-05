@@ -21,7 +21,6 @@ public class Subscriber {
 
     @NotBlank(message = "email không được để trống")
     private String email;
-
     @NotBlank(message = "name không được để trống")
     private String name;
 

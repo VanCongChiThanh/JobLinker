@@ -67,11 +67,10 @@ public class AuthController {
        ResponseCookie resCookie=ResponseCookie
                .from("refresh_token", refresh_token)
                .httpOnly(true)
-               .secure(true)
+               .secure(false)
                .maxAge(refreshTokenExpiration)
                .path("/")
                .build();
-
        return ResponseEntity.ok()
                .header(HttpHeaders.SET_COOKIE,resCookie.toString())
                .body(res);
@@ -104,12 +103,12 @@ public class AuthController {
         res.setAccessToken(access_token);
 
         String new_refresh_token=this.securityUtil.createRefreshToken(email,res);
-        this.userService.updateUserToken(refresh_token,email);
+        this.userService.updateUserToken(new_refresh_token,email);
 
         ResponseCookie resCookie=ResponseCookie
-                .from("refresh_token", refresh_token)
+                .from("refresh_token",new_refresh_token)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .maxAge(refreshTokenExpiration)
                 .path("/")
                 .build();
@@ -127,17 +126,15 @@ public class AuthController {
         } else {
             System.out.println("Authentication found: " + authentication.getPrincipal());
         }
-
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         if (email.equals("")) {
             throw new CustomException("Access Token invalid");
         }
-
         this.userService.updateUserToken(null, email);
         ResponseCookie deleteCookie = ResponseCookie
                 .from("refresh_token", null)
                 .httpOnly(true)                // Chỉ có thể truy cập từ server
-                .secure(true)                  // Chỉ gửi cookie qua HTTPS
+                .secure(false)                  // true:Chỉ gửi cookie qua HTTPS
                 .path("/")                     // Cookie có hiệu lực cho tất cả các đường dẫn
                 .maxAge(0)                     // Xóa cookie ngay lập tức
                 .build();

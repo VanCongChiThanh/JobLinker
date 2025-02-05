@@ -102,7 +102,7 @@ public class JobService {
         existingJob.setLevel(job.getLevel());
         existingJob.setStartTime(job.getStartTime());
         existingJob.setEndTime(job.getEndTime());
-        existingJob.setActive(true);
+        existingJob.setActive(job.isActive());
 
         Job currentJob = this.jobRepository.save(existingJob);
         // convert response
@@ -152,17 +152,13 @@ public class JobService {
     public List<Job> getTopJobsWithMostResumes(int limit) {
         return jobRepository.findTopJobsByResumesCount(Pageable.ofSize(limit));
     }
-    public List<Job> getJobsByEmployerId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException("User with id = " + userId + " not found"));
-        Company company = user.getCompany();
-        if (company == null) {
-            throw new CustomException("Company not found for user with id = " + userId);
-        }
-        List<Job> jobs = jobRepository.findByCompanyId(company.getId());
+    public List<Job> getJobsByCompanyId(Long companyId) {
+
+        List<Job> jobs = jobRepository.findByCompanyId(companyId);
         if (jobs.isEmpty()) {
-            throw new CustomException("No jobs found for company with id = " + company.getId());
+            throw new CustomException("No jobs found for company with id = " + companyId);
         }
         return jobs;
     }
+
 }

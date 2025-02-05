@@ -40,7 +40,6 @@ public class ResumeService {
     @Autowired
     private FilterSpecificationConverter filterSpecificationConverter;
 
-
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
@@ -112,7 +111,7 @@ public class ResumeService {
         return mapToResFetchResumeDTO(resume);
     }
 
-    public ResultPaginationDTO getResumes(Specification<Resume> spec, Pageable pageable){
+    public ResultPaginationDTO fetchAllResume(Specification<Resume> spec, Pageable pageable) {
         Page<Resume> pageUser = this.resumeRepository.findAll(spec, pageable);
         ResultPaginationDTO rs = new ResultPaginationDTO();
         ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
@@ -124,15 +123,18 @@ public class ResumeService {
         mt.setTotal(pageUser.getTotalElements());
 
         rs.setMeta(mt);
+
+        // remove sensitive data
         List<ResFetchResumeDTO> listResume = pageUser.getContent()
-                .stream()
-                .map(this::mapToResFetchResumeDTO)
+                .stream().map(item -> this.getResume(item.getId()))
                 .collect(Collectors.toList());
-        //this::mapToResFetchResumeDTO ~ resume -> this.mapToResFetchResumeDTO(resume).
+
         rs.setResult(listResume);
 
         return rs;
     }
+
+
     private ResFetchResumeDTO mapToResFetchResumeDTO(Resume resume) {
         ResFetchResumeDTO res = new ResFetchResumeDTO();
         res.setId(resume.getId());

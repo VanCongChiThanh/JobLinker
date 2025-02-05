@@ -57,9 +57,10 @@ public class JobController {
     public ResponseEntity<List<Job>> getTopJobs(){
         return ResponseEntity.ok(jobService.getTopJobsWithMostResumes(12));
     }
-    @GetMapping("/jobs/by-employer/{id}")
-    @ApiMessage("jobs by employer")
-    public ResponseEntity<List<Job>> getJobsbyEmployer(@PathVariable("id") long id) {
-        return ResponseEntity.ok().body(this.jobService.getJobsByEmployerId(id));
+    @GetMapping("/jobs/by-company/{companyId}")
+    public ResponseEntity<List<Job>> getJobsByCompanyId(@PathVariable Long companyId) {
+        List<Job> jobs = jobService.getJobsByCompanyId(companyId);
+        return ResponseEntity.ok(jobs);
     }
+
 }

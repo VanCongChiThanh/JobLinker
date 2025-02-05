@@ -2,6 +2,7 @@ package com.joblinker.repository;
 
 import com.joblinker.domain.Company;
 import com.joblinker.domain.Job;
+import com.joblinker.domain.Skill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -16,4 +17,5 @@ public interface JobRepository extends JpaRepository<Job,Long> , JpaSpecificatio
     List<Job> findTopJobsByResumesCount(Pageable pageable);
 
     List<Job> findByCompanyId(Long id);
+    List<Job> findBySkillsIn(List<Skill> skills);
 }

@@ -73,7 +73,7 @@ public class SecurityUtil {
 
     public String createRefreshToken(String email, ResLoginDTO userDTO) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
         ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
         userToken.setId(userDTO.getUser().getId());
