@@ -5,6 +5,7 @@ import com.joblinker.domain.response.User.ResCreateUserDTO;
 import com.joblinker.domain.response.User.ResUpdateUserDTO;
 import com.joblinker.domain.response.ResultPaginationDTO;
 import com.joblinker.service.UserService;
+import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.annotation.ApiMessage;
 import com.joblinker.util.error.CustomException;
 import com.joblinker.util.error.IdInvalidException;
@@ -84,6 +85,13 @@ public class UserController {
     public ResponseEntity<ResUpdateUserDTO> updateUser(
             @PathVariable Long id,
             @RequestBody User updateUser) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ?
+                SecurityUtil.getCurrentUserLogin().get() : "";
+
+        User currentUser = this.userService.getUserbyEmail(email);
+        if (!currentUser.getId().equals(id) && !currentUser.getRole().toString().contains("ADMIN")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         User updatedUser = userService.updateUser(id, updateUser);
         return ResponseEntity.ok(this.userService.convertToResUpdateUserDTO(updatedUser));
     }

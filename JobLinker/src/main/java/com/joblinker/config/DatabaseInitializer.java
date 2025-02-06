@@ -117,7 +117,11 @@ public class DatabaseInitializer implements CommandLineRunner {
                             permission.getMethod().equals("PUT") ||
                             permission.getMethod().equals("DELETE")))
                     .collect(Collectors.toList()));
-
+            employerRole.getPermissions().addAll(allPermissions.stream()
+                    .filter(permission -> permission.getModule().equals("USERS"))
+                    .filter(permission -> permission.getMethod().equals("GET") ||
+                            permission.getMethod().equals("PUT"))
+                    .collect(Collectors.toList()));
             this.roleRepository.save(employerRole);
             System.out.println("EMPLOYER role created.");
         }
@@ -138,6 +142,11 @@ public class DatabaseInitializer implements CommandLineRunner {
                     .filter(permission -> (permission.getModule().equals("SUBSCRIBERS")))
                     .collect(Collectors.toList()));
 
+            userRole.getPermissions().addAll(allPermissions.stream()
+                    .filter(permission -> permission.getModule().equals("USERS"))
+                    .filter(permission -> permission.getMethod().equals("GET") ||
+                            permission.getMethod().equals("PUT"))
+                    .collect(Collectors.toList()));
             this.roleRepository.save(userRole);
             System.out.println("USER role created.");
         }
