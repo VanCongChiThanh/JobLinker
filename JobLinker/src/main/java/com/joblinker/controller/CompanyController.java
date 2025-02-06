@@ -79,14 +79,14 @@ public class CompanyController {
         return null;
     }
 
-    @GetMapping("/companies/{companyId}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable Long companyId) {
-        return ResponseEntity.ok(companyService.getCompanyById(companyId));
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<Company> getCompanyById(@PathVariable Long id) {
+        return ResponseEntity.ok(companyService.getCompanyById(id));
     }
 
-    @DeleteMapping("/companies/{companyId}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long companyId) {
-         this.companyService.deleteCompany(companyId);
+    @DeleteMapping("/companies/{id}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+         this.companyService.deleteCompany(id);
 
         return ResponseEntity.ok(null);
     }

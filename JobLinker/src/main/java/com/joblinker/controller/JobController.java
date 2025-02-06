@@ -33,10 +33,10 @@ public class JobController {
             @Valid @RequestBody Job job) {
         return ResponseEntity.ok(jobService.updateJob(id, job));
     }
-    @GetMapping("/jobs/{jobId}")
+    @GetMapping("/jobs/{id}")
     @ApiMessage("Get job by id")
-    public ResponseEntity<Job> getJobById(@PathVariable Long jobId) {
-        return ResponseEntity.ok(jobService.getJobById(jobId));
+    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+        return ResponseEntity.ok(jobService.getJobById(id));
     }
     @GetMapping("/jobs")
     @ApiMessage("Get job with pagination")

@@ -23,7 +23,7 @@ public class SubscriberController {
     public ResponseEntity<Subscriber> create(@Valid @RequestBody Subscriber subscriber){
         return ResponseEntity.status(HttpStatus.CREATED).body(this.subscriberService.create(subscriber));
     }
-    @PutMapping("/subcribers/{id}")
+    @PutMapping("/subscribers/{id}")
     public ResponseEntity<Subscriber> update
             (@PathVariable Long id,
              @Valid @RequestBody Subscriber subscriber){
@@ -35,8 +35,14 @@ public class SubscriberController {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
-
+        System.out.println(email);
         return ResponseEntity.ok().body(this.subscriberService.findByEmail(email));
+    }
+    @DeleteMapping("/subscribers/{id}")
+    @ApiMessage("Delete subscriber")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.subscriberService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

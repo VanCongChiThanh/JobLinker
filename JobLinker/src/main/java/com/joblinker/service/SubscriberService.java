@@ -100,5 +100,8 @@ public class SubscriberService {
     public Subscriber findByEmail(String email) {
         return this.subscriberRepository.findByEmail(email);
     }
-
+    public void delete(Long id) {
+        Subscriber existingSubscriber = this.findById(id);
+        this.subscriberRepository.delete(existingSubscriber);
+    }
 }
