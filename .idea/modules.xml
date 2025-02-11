@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/JobLinker.iml" filepath="$PROJECT_DIR$/.idea/JobLinker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JobLinker.JobLinker.main~1.iml" filepath="$PROJECT_DIR$/.idea/modules/JobLinker.JobLinker.main~1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JobLinker.JobLinker.main.iml" filepath="$PROJECT_DIR$/.idea/modules/JobLinker.JobLinker.main.iml" />
     </modules>
   </component>
 </project>
