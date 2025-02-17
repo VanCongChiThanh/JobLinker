@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.constant.GenderEnum;
+import com.joblinker.util.constant.Provider;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
+    private Provider provider = Provider.LOCAL;
     private String name;
     @NotBlank(message = "email is not empty")
     private String email;

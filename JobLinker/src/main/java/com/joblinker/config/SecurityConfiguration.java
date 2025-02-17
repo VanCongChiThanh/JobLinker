@@ -1,15 +1,21 @@
 package com.joblinker.config;
 
+import com.joblinker.service.OAuth2AuthenticationSuccessHandler;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -37,13 +43,16 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+                                                   OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler) throws Exception {
         String[] whiteList = new String[]{
                 "/",
-                "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/register",
+                "/api/v1/auth/**", "/api/v1/auth/refresh", "/api/v1/auth/register",
                 "/storage/**",
-                "/api/v1/email/**"
+                "/api/v1/email/**","/oauth2/authorization/google"
         };
         http
                 .csrf(csrf -> csrf.disable())
@@ -58,12 +67,16 @@ public class SecurityConfiguration {
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
-//                .exceptionHandling(
-//                        exceptions -> exceptions
-//                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint() )  //401
-//                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) //403
-//                )
-                .formLogin(f -> f.disable())
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2AuthenticationSuccessHandler) // Dành cho đăng nhập Google
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                        })
+                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
@@ -101,6 +114,17 @@ public class SecurityConfiguration {
         return jwtAuthenticationConverter;
 
     }
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http,
+                                                       PasswordEncoder passwordEncoder,
+                                                       UserDetailsService userDetailsService) throws Exception {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(authProvider);
+    }
+
 
     private SecretKey getSecretKey() {
         byte[] keyBytes = Base64.from(jwtKey).decode();

@@ -1,13 +1,16 @@
 package com.joblinker.controller;
 
+import com.joblinker.config.SecurityConfiguration;
 import com.joblinker.domain.User;
 import com.joblinker.domain.request.LoginDTO;
 import com.joblinker.domain.response.ResLoginDTO;
 import com.joblinker.domain.response.User.ResCreateUserDTO;
+import com.joblinker.service.RoleService;
 import com.joblinker.service.UserService;
 import com.joblinker.util.SecurityUtil;
 import com.joblinker.util.annotation.ApiMessage;
 import com.joblinker.util.error.CustomException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +20,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,14 +36,16 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final RoleService roleService;
 
     @Value("${jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public  AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, PasswordEncoder passwordEncoder) {
+    public  AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil, UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     @PostMapping("/auth/login")
@@ -75,6 +85,7 @@ public class AuthController {
                .header(HttpHeaders.SET_COOKIE,resCookie.toString())
                .body(res);
     }
+
     @GetMapping("/auth/refresh")
     @ApiMessage("Get user by refresh token")
     public ResponseEntity<ResLoginDTO> getRefreshToken(
