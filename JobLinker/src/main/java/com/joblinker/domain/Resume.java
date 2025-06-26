@@ -35,6 +35,7 @@ public class Resume {
 
     private String createdBy;
     private String updatedBy;
+
     @PrePersist
     public void handleBeforeCreate() {
         this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true

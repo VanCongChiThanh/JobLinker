@@ -9,6 +9,7 @@ import com.joblinker.util.error.CustomException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -19,7 +20,11 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
     @Autowired
     UserService userService;
-
+    private static final List<String> WHITE_LIST = List.of(
+            "/api/v1/jobs",
+            "/api/v1/companies",
+            "/api/v1/skills"
+    );
     @Override
     @Transactional
     public boolean preHandle(
@@ -34,7 +39,9 @@ public class PermissionInterceptor implements HandlerInterceptor {
         System.out.println(">>> path= " + path);
         System.out.println(">>> httpMethod= " + httpMethod);
         System.out.println(">>> requestURI= " + requestURI);
-
+        if (HttpMethod.GET.matches(httpMethod) && WHITE_LIST.stream().anyMatch(path::startsWith)) {
+            return true;
+        }
         // check permission
         String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()

@@ -47,10 +47,8 @@ public class GlobalExceptionHandler {
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
         restResponse.setError(exception.getBody().getDetail());
-
         List<String> errors=fieldErrors.stream().map(f->f.getDefaultMessage()).collect(Collectors.toList());
         restResponse.setMessage(errors.size()>1?errors:errors.get(0));
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
     @ExceptionHandler(NoResourceFoundException.class)
@@ -59,7 +57,6 @@ public class GlobalExceptionHandler {
         restResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
         restResponse.setError(exception.getMessage());
         restResponse.setMessage("404 Not found");
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restResponse);
     }
     @ExceptionHandler(value = {
@@ -72,5 +69,4 @@ public class GlobalExceptionHandler {
         res.setError("Exception upload file...");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
-
 }
