@@ -20,8 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class FileController {
-    @Value("${upload-file.base-path}")
-    private String baseURI;
     private final FileService fileService;
 
     public FileController(FileService fileService) {
@@ -32,20 +30,22 @@ public class FileController {
     public ResponseEntity<ResUploadFileDTO> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("folder") String folder
-     ) throws URISyntaxException,IOException,StorageException {
-        if(file==null || file.isEmpty()){
+    ) throws IOException, StorageException {
+        if(file == null || file.isEmpty()){
             throw new StorageException("File cannot be empty");
         }
+
         String fileName = file.getOriginalFilename();
         List<String> allowedExtensions = Arrays.asList("pdf", "jpg", "jpeg", "png", "doc", "docx");
-        boolean isValid = allowedExtensions.stream().anyMatch(item -> fileName.toLowerCase().endsWith(item));
+        boolean isValid = allowedExtensions.stream().anyMatch(item ->
+                fileName.toLowerCase().endsWith(item));
+
         if (!isValid) {
             throw new StorageException("Invalid file extension. Supported extensions are: " + allowedExtensions);
         }
-        this.fileService.createDirectory(baseURI + folder);
+        String uploadFileUrl = this.fileService.store(file, folder);
 
-        String uploadFile = this.fileService.store(file, folder);
-        ResUploadFileDTO res = new ResUploadFileDTO(uploadFile, Instant.now());
+        ResUploadFileDTO res = new ResUploadFileDTO(uploadFileUrl, Instant.now());
         return ResponseEntity.ok().body(res);
     }
 }

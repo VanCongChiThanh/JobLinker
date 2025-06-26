@@ -12,6 +12,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResUploadFileDTO {
-    private String fileName;
+    private String fileUrl;
     private Instant uploadedAt;
 }

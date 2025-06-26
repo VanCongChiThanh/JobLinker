@@ -1,53 +1,38 @@
 package com.joblinker.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FileService {
-    @Value("${upload-file.base-path}")
-    private String baseURI;
+    private final Cloudinary cloudinary;
 
-    public void createDirectory(String folder) throws URISyntaxException {
-        URI uri = new URI(folder);
-        Path path = Paths.get(uri);
-        File tmpDir = new File(path.toString());
-        if (!tmpDir.isDirectory()) {
-            try {
-                Files.createDirectory(tmpDir.toPath());
-                System.out.println(">>> CREATE NEW DIRECTORY SUCCESSFUL, PATH = " + tmpDir.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println(">>> SKIP MAKING DIRECTORY, ALREADY EXISTS");
+    public String store(MultipartFile file, String folder) throws IOException {
+        try {
+            Map<String, Object> uploadParams = ObjectUtils.asMap(
+                    "folder", folder,
+                    "resource_type", "auto"
+            );
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadParams);
+            return (String) uploadResult.get("secure_url");
+        } catch (IOException e) {
+            throw new IOException("Failed to upload file to Cloudinary: " + e.getMessage());
         }
-
     }
-
-    public String store(MultipartFile file, String folder) throws URISyntaxException, IOException {
-        String finalName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-
-        URI uri = new URI(baseURI + folder + "/" + finalName);
-        Path path = Paths.get(uri);
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, path,
-                    StandardCopyOption.REPLACE_EXISTING);
+    public void deleteFile(String publicId) throws IOException {
+        try {
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            throw new IOException("Failed to delete file from Cloudinary: " + e.getMessage());
         }
-        return finalName;
     }
-
-
-
 }

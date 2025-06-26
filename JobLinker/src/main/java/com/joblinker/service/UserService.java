@@ -99,6 +99,7 @@ public class UserService {
             existingUser.setAge(updateUser.getAge());
             existingUser.setAddress(updateUser.getAddress());
             existingUser.setGender(updateUser.getGender());
+            existingUser.setAvatar(updateUser.getAvatar());
             if (updateUser.getCompany() != null) {
                 Optional<Company> company = this.companyRepository.findById(updateUser.getCompany().getId());
                 existingUser.setCompany(company.isPresent() ? company.get() : null);
@@ -140,9 +141,11 @@ public class UserService {
         resUpdateUserDTO.setName(user.getName());
         resUpdateUserDTO.setEmail(user.getEmail());
         resUpdateUserDTO.setAge(user.getAge());
+        resUpdateUserDTO.setAvatar(user.getAvatar());
         resUpdateUserDTO.setAddress(user.getAddress());
         resUpdateUserDTO.setGender(user.getGender());
         resUpdateUserDTO.setUpdateAt(user.getUpdatedAt());
+
         return resUpdateUserDTO;
     }
     public ResUserDTO convertToResUserDTO(User user) {

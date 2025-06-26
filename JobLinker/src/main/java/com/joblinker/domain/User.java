@@ -31,6 +31,7 @@ public class User {
     private int age;
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
+    private String avatar;
     private String address;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
