@@ -1,28 +1,27 @@
-JobLinker
-A full-stack job search platform that connects job seekers and employers.
+# JobLinker
 
-🌐 Demo
-Backend: GitHub - BE
+A **full-stack job search platform** that connects **job seekers and employers**.
 
-Frontend: GitHub - FE
+## 🌐 Demo
 
-🚀 Features
-✅ User registration and login via email/password or Google OAuth 2.0
-✅ Role-based access: applicant, employer, admin
-✅ Applicants can create profiles, browse jobs, and submit applications
-✅ Employers can post jobs and manage applicants
+- **Backend:** [https://github.com/VanCongChiThanh/JobLinker](https://github.com/VanCongChiThanh/JobLinker)
+- **Frontend:** [https://github.com/VanCongChiThanh/Joblinker-FE](https://github.com/VanCongChiThanh/Joblinker-FE)
 
-🛠️ Tech Stack
-Backend
-Spring Boot, Spring Security, JWT
+## 🚀 Features
 
-Spring Data JPA, MySQL
+- ✅ User registration and login via email/password or Google OAuth 2.0
+- ✅ Role-based access: applicant, employer, admin
+- ✅ Applicants can create profiles, browse jobs, and submit applications
+- ✅ Employers can post jobs and manage applicants
 
-Cloudinary for file uploads
+## 🛠️ Tech Stack
 
-Google OAuth 2.0 for third-party authentication
+### Backend
+- Spring Boot, Spring Security, JWT
+- Spring Data JPA, MySQL
+- Cloudinary for file uploads
+- Google OAuth 2.0 for third-party authentication
 
-Frontend
-Vue.js
-
-Bootstrap for styling
+### Frontend
+- Vue.js
+- Bootstrap for styling
