@@ -21,7 +21,6 @@ public class FileService {
                     "folder", folder,
                     "resource_type", "auto"
             );
-
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadParams);
             return (String) uploadResult.get("secure_url");
         } catch (IOException e) {
