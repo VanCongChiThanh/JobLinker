@@ -10,5 +10,4 @@
             <column name="provider" type="VARCHAR(20)" defaultValue="LOCAL" />
         </addColumn>
     </changeSet>
-
 </databaseChangeLog>
